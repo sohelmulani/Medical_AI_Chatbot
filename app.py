@@ -1,6 +1,6 @@
 
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from langchain_openai import ChatOpenAI
 from langchain_pinecone import PineconeVectorStore
 from langchain.chains import ConversationalRetrievalChain
@@ -48,6 +48,22 @@ rag_chain = ConversationalRetrievalChain.from_llm(
     retriever=retriever,
     memory=memory
 )
+
+# enpoint for main page
+@app.route("/")
+def index():
+    return render_template('bot.html')
+
+
+@app.route("/get", methods=["GET", "POST"])
+def chat():
+    msg = request.form["msg"]
+    question = msg
+    print(input)
+    response = rag_chain({"question": question})
+    #print("Response : ", response["answer"])
+    return str(response["answer"])
+
 
 # Flask endpoint 
 @app.route('/ask', methods=['POST'])
