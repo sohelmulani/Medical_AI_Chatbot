@@ -1,1 +1,1 @@
-# Medical_chatbot_backend
+# Medical_AiBot
