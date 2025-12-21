@@ -1,6 +1,6 @@
 # Medical_AiBot 🩺
 
-Medical_AiBot is an experimental conversational AI assistant designed to help answer medical questions by combining a LangChain-enabled Retrieval-Augmented Generation (RAG) backend with a lightweight React frontend.
+Medical_AiBot is an experimental conversational AI assistant designed to help answer medical questions by combining a LangChain-enabled Retrieval-Augmented Generation (RAG).
 
 Link: https://tinyurl.com/AIMediBot
 
