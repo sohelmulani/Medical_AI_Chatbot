@@ -3,7 +3,7 @@ FROM python:3.10-slim-buster
 WORKDIR /backend
 
 # Install build tools if needed
-RUN apt-get update && apt-get install -y build-essential
+#RUN apt-get update && apt-get install -y build-essential
 
 # Copy everything
 COPY . /backend
