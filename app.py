@@ -24,7 +24,8 @@ CORS(app)
 # LLM model
 llm_model = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
-    model_name="gpt-5-nano"
+    model_name="gpt-5-nano",
+    streaming= True
 )
 
 # Pinecone setup
@@ -34,7 +35,7 @@ vector_store = PineconeVectorStore.from_existing_index(
     index_name=index_name,
     embedding=embeddings
 )
-retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 2})
 
 # Buffer Memory setup to memorise past conversations
 memory = ConversationBufferMemory(
@@ -61,11 +62,18 @@ def ask():
     question = data.get('question')
     if not question:
         return jsonify({"Error": "Please ask a question to proceed"}), 400
+    
+    #adding generator to stream faster responses
+    def generate():
+        for chunk in rag_chain.stream({"question": question}):
+            yield chunk["answer"]
 
-    result = rag_chain({"question": question})
-    answer = result["answer"]
+    # result = rag_chain({"question": question})
+    # answer = result["answer"]
 
-    return str(answer), 200
+    # return str(answer), 200
+    return app.response_class(generate(), mimetype='text/plain')
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
