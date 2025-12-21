@@ -8,35 +8,38 @@
     <!-- Bootstrap & FontAwesome -->
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
           crossorigin="anonymous">
     <link rel="stylesheet"
           href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
           crossorigin="anonymous">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 <div class="container-fluid h-100">
     <div class="row justify-content-center h-100">
         <div class="col-md-8 col-xl-6 chat">
             <div class="card shadow">
-                <div class="card-header msg_head bg-primary text-white">
-                    <div class="d-flex bd-highlight align-items-center">
-                        <div class="img_cont">
-                            <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png"
-                                 class="rounded-circle user_img" width="50" height="50">
-                        </div>
+                <!-- Header -->
+                <div class="card-header msg_head bg-primary text-white d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <img src="https://cdn-icons-png.flaticon.com/512/387/387569.png"
+                             class="rounded-circle user_img" width="50" height="50">
                         <div class="user_info ml-3">
                             <span class="h5">AI Medical Assistant</span>
                             <p class="mb-0">Your trusted health companion</p>
                         </div>
                     </div>
+                    <button id="resetChat" class="btn btn-light btn-sm">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
                 </div>
+
+                <!-- Chat body -->
                 <div id="messageFormeight" class="card-body msg_card_body"></div>
+
+                <!-- Footer -->
                 <div class="card-footer">
                     <form id="messageArea" class="input-group">
                         <input type="text" id="text" name="msg" placeholder="Type your message..."
@@ -55,6 +58,8 @@
 
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- Markdown parser -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
 $(document).ready(function() {
@@ -62,6 +67,12 @@ $(document).ready(function() {
         $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
     }
 
+    // Reset chat
+    $("#resetChat").on("click", function() {
+        $("#messageFormeight").empty();
+    });
+
+    // Handle message submit
     $("#messageArea").on("submit", function(event) {
         event.preventDefault();
         const date = new Date();
@@ -78,7 +89,7 @@ $(document).ready(function() {
         $("#messageFormeight").append(userHtml);
         scrollToBottom();
 
-        // Loader while waiting for response
+        // Loader while waiting
         var loaderHtml = '<div class="d-flex justify-content-start mb-4" id="loader">' +
             '<div class="img_cont_msg"><img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg" width="40" height="40"></div>' +
             '<div class="msg_cotainer"><div class="loader"></div></div></div>';
@@ -95,7 +106,8 @@ $(document).ready(function() {
                 $("#loader").remove();
                 var botHtml = '<div class="d-flex justify-content-start mb-4">' +
                     '<div class="img_cont_msg"><img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" class="rounded-circle user_img_msg" width="40" height="40"></div>' +
-                    '<div class="msg_cotainer">' + data.answer +
+                    '<div class="msg_cotainer bot_response">' +
+                    '<span class="bot_icon">🩺</span> ' + marked.parse(data) +
                     '<span class="msg_time">' + str_time + '</span></div></div>';
                 $("#messageFormeight").append($.parseHTML(botHtml));
                 scrollToBottom();

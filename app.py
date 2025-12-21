@@ -19,6 +19,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Initiate Flask app
 app = Flask(__name__)
+CORS(app)
 
 # LLM model
 llm_model = ChatOpenAI(
@@ -64,7 +65,7 @@ def ask():
     result = rag_chain({"question": question})
     answer = result["answer"]
 
-    return jsonify({"answer": answer}), 200
+    return str(answer), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
