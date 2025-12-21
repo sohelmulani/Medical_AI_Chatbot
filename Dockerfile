@@ -2,12 +2,14 @@ FROM python:3.10-slim-buster
 
 WORKDIR /backend
 
+# Install build tools if needed
+RUN apt-get update && apt-get install -y build-essential
+
+# Copy everything
 COPY . /backend
 
-COPY templates/ /backend/templates
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY static/ /backend/static
-
-RUN pip install -r requirements.txt
-
-CMD ["python3", "app.py"]
+# Run the app
+CMD ["python", "app.py"]
