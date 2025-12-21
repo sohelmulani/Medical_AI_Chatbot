@@ -1,6 +1,6 @@
 
 import os
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, render_template, request, jsonify
 from langchain_openai import ChatOpenAI
 from langchain_pinecone import PineconeVectorStore
 from langchain.chains import ConversationalRetrievalChain
@@ -19,7 +19,6 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Initiate Flask app
 app = Flask(__name__)
-CORS(app)
 
 # LLM model
 llm_model = ChatOpenAI(
@@ -49,25 +48,14 @@ rag_chain = ConversationalRetrievalChain.from_llm(
     memory=memory
 )
 
-# enpoint for main page
+# Main page
 @app.route('/', methods=['GET'])
 def index():
     return render_template('bot.html')
 
-
-@app.route('/get', methods=['POST'])
-def chat():
-    msg = request.form["msg"]
-    question = msg
-    print(input)
-    response = rag_chain({"question": question})
-    #print("Response : ", response["answer"])
-    return str(response["answer"])
-
-
-# Flask endpoint 
+# JSON API endpoint
 @app.route('/ask', methods=['POST'])
-def home():
+def ask():
     data = request.get_json()
     question = data.get('question')
     if not question:
@@ -78,7 +66,5 @@ def home():
 
     return jsonify({"answer": answer}), 200
 
-
-#Main Function
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
