@@ -50,12 +50,12 @@ rag_chain = ConversationalRetrievalChain.from_llm(
 )
 
 # enpoint for main page
-@app.route("/")
+@app.route('/', methods=['GET'])
 def index():
     return render_template('bot.html')
 
 
-@app.route("/get", methods=["GET", "POST"])
+@app.route('/get', methods=['POST'])
 def chat():
     msg = request.form["msg"]
     question = msg
