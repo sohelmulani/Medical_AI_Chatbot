@@ -2,6 +2,8 @@
 
 Medical_AiBot is an experimental conversational AI assistant designed to help answer medical questions by combining a LangChain-enabled Retrieval-Augmented Generation (RAG) backend with a lightweight React frontend.
 
+Link: https://tinyurl.com/AIMediBot
+
 ## 🚀 Features
 - Conversational RAG powered by LangChain and a vector store (Pinecone)
 - PDF document ingestion and chunking for knowledge retrieval
@@ -51,16 +53,17 @@ Follow these steps to get the project running locally.
 	```bash
 	python Backend/app.py
 	```
-	The backend listens on http://localhost:5000 by default and exposes a POST `/ask` endpoint that expects JSON `{ "question": "..." }`.
+	The backend listens on http://localhost:8080 by default and exposes a POST `/ask` endpoint that expects JSON `{ "question": "..." }`.
 
 ---
 
 ## 🗂️ Project Structure (short)
-- Backend/
   - `app.py` — Flask API and RAG chain
   - `store_index.py` — loads PDFs, creates embeddings, and stores vectors in Pinecone
   - `src/` — helper modules for loading, splitting, and embedding documents
-- medibot_frontend/ — React UI
+  - templates/bot.html- Main page of bot
+  - static/style.css- css for bot UI
+
 
 ---
 
@@ -73,9 +76,76 @@ Follow these steps to get the project running locally.
 ## Contributing
 Contributions are welcome — open issues or PRs for bug fixes, improvements, or new features. Please include clear descriptions and, when applicable, reproducible steps.
 
-## License
-This repository does not include a license file. Add a LICENSE (e.g., MIT) if you plan to open source the project.
+
+# 🚀 CI/CD Pipeline for Dockerized Application on AWS EC2
+
+This project includes a **GitHub Actions workflow** that automates the build, push, and deployment of a Dockerized application to an **Amazon EC2 instance** using **Amazon Elastic Container Registry (ECR)**.
 
 ---
 
-If you'd like, I can add badges, runtime examples, screenshots, or CI setup next. ✅
+## 📦 Workflow Overview
+
+The pipeline is defined in `.github/workflows/deploy.yml` and consists of two jobs:
+
+### 1. Continuous Integration (CI)
+- **Trigger**: Runs on every push to the `main` branch.
+- **Steps**:
+  - Checkout source code.
+  - Configure AWS credentials using GitHub Secrets.
+  - Authenticate with Amazon ECR.
+  - Build Docker image.
+  - Tag and push the image to ECR.
+
+### 2. Continuous Deployment (CD)
+- **Trigger**: Runs after CI completes successfully.
+- **Runs on**: A **self-hosted runner** (your EC2 instance).
+- **Steps**:
+  - Checkout source code.
+  - Configure AWS credentials.
+  - Authenticate with Amazon ECR.
+  - Stop and remove any container currently running on port `8080`.
+  - Run the latest Docker image from ECR on port `8080`.
+
+---
+
+## 🔑 Secrets Required
+
+You must configure the following secrets in your GitHub repository:
+
+- `AWS_ACCESS_KEY_ID` – IAM user access key  
+- `AWS_SECRET_ACCESS_KEY` – IAM user secret key  
+- `AWS_DEFAULT_REGION` – AWS region (e.g., `us-east-1`)  
+- `ECR_REPO` – Name of your ECR repository  
+- `PINECONE_API_KEY` – Pinecone API key (if used in app)  
+- `OPENAI_API_KEY` – OpenAI API key (if used in app)  
+
+---
+
+## 🖥️ Self-Hosted Runner Setup (EC2)
+
+The **CD job** requires a self-hosted runner installed on your EC2 instance:
+
+1. Launch an EC2 instance with Docker installed.  
+2. Register the instance as a GitHub Actions self-hosted runner:  
+   - Go to **GitHub → Settings → Actions → Runners → New self-hosted runner**.  
+   - Follow the instructions to download and configure the runner.  
+3. Ensure the runner has permission to run Docker commands.  
+
+---
+
+## ⚡ Deployment Flow
+
+1. Developer pushes code to `main`.  
+2. GitHub Actions builds and pushes Docker image to ECR.  
+3. EC2 runner pulls the latest image.  
+4. Old container on port `8080` is stopped and removed.  
+5. New container is started on port `8080`.  
+
+---
+
+## ✅ Benefits
+
+- **Automated builds** → No manual Docker commands needed.  
+- **Zero-downtime deployment** → Old container stopped before new one starts.  
+- **Secure** → AWS credentials and API keys managed via GitHub Secrets.  
+- **Scalable** → Easily extend to multiple environments or ports.  

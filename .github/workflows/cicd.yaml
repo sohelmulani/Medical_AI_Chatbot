@@ -4,6 +4,8 @@ name: Deploy Application Docker Image to EC2 instance
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "README.md"
 
 jobs:
   Continuous-Integration:   # First job: Build & Push Docker image to Amazon ECR
