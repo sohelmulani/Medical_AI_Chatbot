@@ -7,7 +7,6 @@ Link: https://tinyurl.com/AIMediBot
 ## 🚀 Features
 - Conversational RAG powered by LangChain and a vector store (Pinecone)
 - PDF document ingestion and chunking for knowledge retrieval
-- Simple React chat UI with Markdown rendering
 - Environment-driven configuration (.env) for safe API key management
 
 ---
@@ -72,9 +71,6 @@ Follow these steps to get the project running locally.
 - Pinecone and OpenAI usage may incur costs; monitor usage and quotas.
 
 ---
-
-## Contributing
-Contributions are welcome — open issues or PRs for bug fixes, improvements, or new features. Please include clear descriptions and, when applicable, reproducible steps.
 
 
 # 🚀 CI/CD Pipeline for Dockerized Application on AWS EC2
